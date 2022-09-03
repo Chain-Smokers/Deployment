@@ -1,0 +1,7 @@
+{
+  "networkName": "tristate",
+  "bootnodeName": "MajorFrancis",
+  "sealerRootName": "Norm",
+  "numberOfSealers": 4,
+  "accountPassword": "password"
+}
