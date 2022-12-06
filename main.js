@@ -1,4 +1,4 @@
-const { execSync } = require("child_process");
+const { execSync, spawn, exec } = require("child_process");
 const fs = require("fs");
 
 const config = require("./config.json");
@@ -10,12 +10,12 @@ const nodesDir = Array.from(Array(config.numberOfSealers).keys()).map(
 );
 fs.writeFileSync("password.txt", config.accountPassword);
 if (!fs.existsSync(rootDir)) fs.mkdirSync(rootDir, { recursive: true });
-if (!fs.existsSync(bootnodeDir + "/data"))
-  fs.mkdirSync(bootnodeDir + "/data", { recursive: true });
+if (!fs.existsSync(bootnodeDir))
+  fs.mkdirSync(bootnodeDir, { recursive: true });
 
 nodesDir.forEach((nodeDir) => {
-  if (!fs.existsSync(nodeDir + "/data"))
-    fs.mkdirSync(nodeDir + "/data", { recursive: true });
+  if (!fs.existsSync(nodeDir))
+    fs.mkdirSync(nodeDir, { recursive: true });
   execSync(
     `geth --datadir ${nodeDir} account new --password ./password.txt`,
     (err, stdout, stderr) => console.log(stdout)
@@ -73,3 +73,13 @@ genesis.extraData =
   "0x" + "0".repeat(64) + addresses.join("") + "0".repeat(130);
 genesis.config.chainId = randomChainId();
 fs.writeFileSync(`${rootDir}/genesis.json`, JSON.stringify(genesis));
+
+nodesDir.forEach((nodeDir) => { execSync(`geth init --datadir ${nodeDir} ${rootDir}/genesis.json`) })
+execSync(`bootnode -genkey ${bootnodeDir}/boot.key`)
+const bootnode = spawn("bootnode", ["-nodekey", `${bootnodeDir}/boot.key`, "-addr", ":30305"])
+let enode = "";
+bootnode.stdout.on('data', (data) => {
+  if (data.toString().startsWith("enode://"))
+    for (let i = 0; i < accounts.length; i++)
+      exec(`geth --datadir ${nodesDir[i]} --port ${30306 + i} --authrpc.port ${8551 + config.numberOfSealers - 6 + i} --http.port ${8545 + i} --bootnodes ${data.toString().split("\n")[0]} --networkid ${genesis.config.chainId} --unlock 0x${accounts[i].address} --password password.txt --syncmode full --allow-insecure-unlock --http --http.corsdomain "*" --mine`)
+})
