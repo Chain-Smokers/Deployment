@@ -10,12 +10,10 @@ const nodesDir = Array.from(Array(config.numberOfSealers).keys()).map(
 );
 fs.writeFileSync("password.txt", config.accountPassword);
 if (!fs.existsSync(rootDir)) fs.mkdirSync(rootDir, { recursive: true });
-if (!fs.existsSync(bootnodeDir))
-  fs.mkdirSync(bootnodeDir, { recursive: true });
+if (!fs.existsSync(bootnodeDir)) fs.mkdirSync(bootnodeDir, { recursive: true });
 
 nodesDir.forEach((nodeDir) => {
-  if (!fs.existsSync(nodeDir))
-    fs.mkdirSync(nodeDir, { recursive: true });
+  if (!fs.existsSync(nodeDir)) fs.mkdirSync(nodeDir, { recursive: true });
   execSync(
     `geth --datadir ${nodeDir} account new --password ./password.txt`,
     (err, stdout, stderr) => console.log(stdout)
@@ -74,9 +72,15 @@ genesis.extraData =
 genesis.config.chainId = randomChainId();
 fs.writeFileSync(`${rootDir}/genesis.json`, JSON.stringify(genesis));
 
-nodesDir.forEach((nodeDir) => { execSync(`geth init --datadir ${nodeDir} ${rootDir}/genesis.json`) })
-execSync(`bootnode -genkey ${bootnodeDir}/boot.key`)
+nodesDir.forEach((nodeDir) => {
+  execSync(`geth init --datadir ${nodeDir} ${rootDir}/genesis.json`);
+});
+execSync(`bootnode -genkey ${bootnodeDir}/boot.key`);
 
-execSync("git clone https://github.com/cubedro/eth-netstats.git && cd eth-netstats && npm install && grunt all")
-execSync("git clone https://github.com/cubedro/eth-net-intelligence-api.git && cd eth-net-intelligence-api && npm install")
-execSync("git clone https://github.com/etherparty/explorer.git && cd explorer && npm install")
+execSync(
+  "git clone https://github.com/cubedro/eth-netstats.git && cd eth-netstats && npm install && grunt all"
+);
+execSync(
+  "git clone https://github.com/cubedro/eth-net-intelligence-api.git && cd eth-net-intelligence-api && npm install"
+);
+// execSync("git clone https://github.com/etherparty/explorer.git && cd explorer && npm install")
