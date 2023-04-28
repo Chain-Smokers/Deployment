@@ -77,10 +77,10 @@ nodesDir.forEach((nodeDir) => {
 });
 execSync(`bootnode -genkey ${bootnodeDir}/boot.key`);
 
-execSync(
-  "git clone https://github.com/cubedro/eth-netstats.git && cd eth-netstats && npm install && grunt all"
-);
-execSync(
-  "git clone https://github.com/cubedro/eth-net-intelligence-api.git && cd eth-net-intelligence-api && npm install"
-);
+// execSync(
+//   "git clone https://github.com/cubedro/eth-netstats.git && cd eth-netstats && npm install && grunt all"
+// );
+// execSync(
+//   "git clone https://github.com/cubedro/eth-net-intelligence-api.git && cd eth-net-intelligence-api && npm install"
+// );
 // execSync("git clone https://github.com/etherparty/explorer.git && cd explorer && npm install")

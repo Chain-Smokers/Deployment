@@ -17,9 +17,9 @@ const bootnode = spawn("bootnode", [
 ]);
 let ethstatsJson = [];
 bootnode.stdout.on("data", (data) => {
-  console.log(data.toString());
+  // console.log(data.toString());
   if (data.toString().startsWith("enode://")) {
-    execSync("pm2 kill");
+    // execSync("pm2 kill");
     for (let i = 0; i < accounts.length; i++) {
       exec(
         `geth --datadir ${nodesDir[i]} --port ${30306 + i} --authrpc.port ${
@@ -32,40 +32,40 @@ bootnode.stdout.on("data", (data) => {
           8545 + config.numberOfSealers + i
         } --ws.origins "*" --mine`
       );
-      ethstatsJson.push({
-        name: `${config.sealerRootName}${i + 1}`,
-        script: "app.js",
-        log_date_format: "YYYY-MM-DD HH:mm Z",
-        merge_logs: false,
-        watch: false,
-        max_restarts: 10,
-        exec_interpreter: "node",
-        exec_mode: "fork_mode",
-        env: {
-          NODE_ENV: "production",
-          RPC_HOST: "localhost",
-          RPC_PORT: `${8545 + i}`,
-          LISTENING_PORT: `${30306 + i}`,
-          INSTANCE_NAME: `${config.sealerRootName}${i + 1}`,
-          CONTACT_DETAILS: "",
-          WS_SERVER: `http://${process.env.HOST_ADDRESS}:3000`,
-          WS_SECRET: `${config.WS_SECRET}`,
-          VERBOSITY: 2,
-        },
-      });
+      // ethstatsJson.push({
+      //   name: `${config.sealerRootName}${i + 1}`,
+      //   script: "app.js",
+      //   log_date_format: "YYYY-MM-DD HH:mm Z",
+      //   merge_logs: false,
+      //   watch: false,
+      //   max_restarts: 10,
+      //   exec_interpreter: "node",
+      //   exec_mode: "fork_mode",
+      //   env: {
+      //     NODE_ENV: "production",
+      //     RPC_HOST: "localhost",
+      //     RPC_PORT: `${8545 + i}`,
+      //     LISTENING_PORT: `${30306 + i}`,
+      //     INSTANCE_NAME: `${config.sealerRootName}${i + 1}`,
+      //     CONTACT_DETAILS: "",
+      //     WS_SERVER: `http://${process.env.HOST_ADDRESS}:3000`,
+      //     WS_SECRET: `${config.WS_SECRET}`,
+      //     VERBOSITY: 2,
+      //   },
+      // });
     }
-    fs.writeFileSync(
-      `eth-net-intelligence-api/app.json`,
-      JSON.stringify(ethstatsJson)
-    );
-    exec("cd eth-net-intelligence-api && pm2 start app.json");
-    exec(
-      `cd eth-netstats && PORT=3000 WS_SECRET="${config.WS_SECRET}" npm start`
-    );
+    // fs.writeFileSync(
+    //   `eth-net-intelligence-api/app.json`,
+    //   JSON.stringify(ethstatsJson)
+    // );
+    // exec("cd eth-net-intelligence-api && pm2 start app.json");
+    // exec(
+    //   `cd eth-netstats && PORT=3000 WS_SECRET="${config.WS_SECRET}" npm start`
+    // );
     // exec("cd explorer && npm start");
-    exec(
-      "ETHERNAL_EMAIL=tohru1601@gmail.com ETHERNAL_PASSWORD=samba4444 ethernal listen -w Tristate"
-    );
+    // exec(
+    //   "ETHERNAL_EMAIL=tohru1601@gmail.com ETHERNAL_PASSWORD=samba4444 ethernal listen -w Tristate"
+    // );
     console.log("\nDone!");
   }
 });
